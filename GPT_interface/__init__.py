@@ -1,0 +1,1 @@
+from .openai_interface_goal import GPT_Interface_Goal

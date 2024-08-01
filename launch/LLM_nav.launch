@@ -1,0 +1,9 @@
+<launch>
+    <arg name="key" default="" />
+    <arg name="model" default="gpt-4" />
+    
+    <node pkg="controller_gpt" type="main.py" name="chat_gpt_node" output="screen">
+        <param name="~key" value="$(arg key)" />
+        <param name="~model" value="$(arg model)" />
+    </node>
+</launch>

@@ -1,0 +1,1 @@
+{"message_type": "geometry_msgs/Pose", "format": {"position": {"x": _, "y": _, "z": _}, 'orientation': {"x": _, "y": _, "z": _, "w": _}}}
