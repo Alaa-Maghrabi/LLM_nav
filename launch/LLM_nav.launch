@@ -1,5 +1,5 @@
 <launch>
-    <arg name="key" default="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" />
+    <arg name="key" default="" />
     <arg name="model" default="gpt-4" />
     
     <node pkg="controller_gpt" type="main.py" name="chat_gpt_node" output="screen">

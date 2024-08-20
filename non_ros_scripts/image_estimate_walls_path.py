@@ -97,7 +97,7 @@ def describe_image(image_path):
 
 
 def get_path(start_point_idx, end_point_idx):
-    key = "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"
+    key = ""
     image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/example_room.png"
 
     # Example usage

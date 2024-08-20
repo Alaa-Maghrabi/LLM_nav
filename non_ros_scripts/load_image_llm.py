@@ -30,7 +30,7 @@ def describe_image(image_path):
 
 
 def main():
-    key = "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"
+    key = ""
     image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/example_room.png"
     image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/apple.png"
 
