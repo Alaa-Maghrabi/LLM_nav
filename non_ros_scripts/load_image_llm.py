@@ -9,6 +9,9 @@ try:
     from transformers import BlipProcessor, BlipForConditionalGeneration
     import torch
 
+    from helper_functions.load_key_from_txt import load_key
+
+
 except ImportError as e:
     raise e
 
@@ -30,7 +33,7 @@ def describe_image(image_path):
 
 
 def main():
-    key = ""
+    key = load_key()
     image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/example_room.png"
     image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/apple.png"
 

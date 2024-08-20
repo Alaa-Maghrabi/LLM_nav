@@ -17,6 +17,9 @@ try:
     import cv2
     import numpy as np
 
+    from helper_functions.load_key_from_txt import load_key
+
+
 except ImportError as e:
     raise e
 
@@ -97,7 +100,7 @@ def describe_image(image_path):
 
 
 def get_path(start_point_idx, end_point_idx):
-    key = ""
+    key = load_key()
     image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/example_room.png"
 
     # Example usage

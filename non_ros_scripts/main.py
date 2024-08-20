@@ -5,6 +5,7 @@ from scipy.spatial.transform import Rotation
 import numpy as np
 from non_ros_scripts.openai_interface_goal import GPT_Interface_Goal
 
+from helper_functions.load_key_from_txt import load_key
 
 # Assuming the ai_interface package is in the parent directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -16,7 +17,7 @@ class ChatGPTNode:
     def __init__(self):
         '''Initialize the ROS node and set up subscribers and publishers'''
 
-        self.key = ""
+        self.key = load_key()
         self.model = "gpt-4"
 
         print(self.key)
