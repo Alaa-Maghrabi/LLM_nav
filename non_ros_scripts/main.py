@@ -17,6 +17,7 @@ class ChatGPTNode:
     def __init__(self):
         '''Initialize the ROS node and set up subscribers and publishers'''
 
+        # self.key = ''
         self.key = load_key()
         self.model = "gpt-4"
 

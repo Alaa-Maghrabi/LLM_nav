@@ -1,7 +1,5 @@
 # With the available models, providing a BEV of a flat is not possible. I am trying to pass a BEV image and ask the
-# model to provide the coordinates of A, B, C. However, it is not capable of doing so. A more tailored model is needed.
-# In image_estimate_robot_path.py, the same image is passed with the coordinates of A, B, C and a path is to be
-# estimated.
+# model to navigate across points after providing their coordinates.
 
 # This code WORKS but does not take into account walls and other obstacles. For that, use image_estimate_walls_path.py
 
@@ -25,6 +23,12 @@ model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-capt
 
 # Function to process the image and generate a description
 def describe_image(image_path):
+    """
+    #TODO: Find the link to this code that was provided online and tweaked to your needs
+
+    :param image_path: a string to the location of the image to be used
+    :return: a text description of the provided image
+    """
     try:
         image = Image.open(image_path)
         inputs = processor(images=image, return_tensors="pt")
@@ -37,7 +41,7 @@ def describe_image(image_path):
 
 def main():
     key = load_key()
-    image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/example_room.png"
+    image_path = "example_room.png"
 
     # Generate the image description
     description = describe_image(image_path)
@@ -66,7 +70,7 @@ def main():
         Given a request to navigate to point A, please provide the step-by-step instructions to reach that point.
     """)
 
-    # Create an instance of the LLMChain with the prompt template
+    # Fuse the LLMChain with the prompt template
     navigation_chain = LLMChain(llm=llm, prompt=prompt_template)
 
     # Prepare the input dictionary with the coordinates and description
@@ -78,16 +82,13 @@ def main():
     }
 
     # Request navigation instructions to point A
-    request = "Please provide the steps to navigate to point A."
+    request = "Provide the steps to navigate to point A."
     inputs["request"] = request
 
     # Run the chain with the inputs
     result = navigation_chain.run(inputs)
 
     print("Navigation Instructions:", result)
-
-
-
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
-# With the available models, providing a BEV of a flat is not possible. I am trying to pass a BEV image and ask the
-# model to provide the coordinates of A, B, C. However, it is not capable of doing so. A more tailored model is needed.
+# With the available models, here we explore if it is possible to directly describe all points of interest in a BEV
+# image using an LLM without and preprocessing. Spoiler alert, it does not work.
 # In image_estimate_robot_path.py, the same image is passed with the coordinates of A, B, C and a path is to be
 # estimated.
 
@@ -11,6 +11,8 @@ try:
     from transformers import BlipProcessor, BlipForConditionalGeneration
     import torch
 
+    from helper_functions.load_key_from_txt import load_key
+
 except ImportError as e:
     raise e
 
@@ -21,6 +23,12 @@ model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-capt
 
 # Function to process the image and generate a description
 def describe_image(image_path):
+    """
+    #TODO: Find the link to this code that was provided online and tweaked to your needs
+
+    :param image_path: a string to the location of the image to be used
+    :return: a text description of the provided image
+    """
     try:
         image = Image.open(image_path)
         inputs = processor(images=image, return_tensors="pt")
@@ -32,15 +40,17 @@ def describe_image(image_path):
 
 
 def main():
-    key = "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"
-    image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/example_room.png"
+    # key = ""
+    key = load_key()
+    image_path = "example_room.png"
 
     # Generate the image description
-    description = describe_image(image_path)
+    description = describe_image(image_path)  # For the BEV image, this is gibberish, it's just random letters
 
     # Coordinates of points A and B
-    coordinates_A = (146, 102)  # Replace with actual values, e.g., "(150, 200)"
-    coordinates_B = (118, 272)  # Replace with actual values, e.g., "(300, 400)"
+    # Note, these were extracted by loading the image in a pixel locator online and just hovering over the points
+    coordinates_A = (146, 102)
+    coordinates_B = (118, 272)
 
     # Define the PromptTemplate with f-strings to include variable values
     prompt_template = PromptTemplate.from_template(f"""
@@ -48,7 +58,7 @@ def main():
         The coordinate axes start from the top left of the image, with the x axis pointing to the right and the y axis 
         increasing downwards.
         The image has each pixel representing 1 mm. Based on the known coordinates of A ({coordinates_A}) and B ({coordinates_B}),
-        please identify and provide the pixel coordinates of point C, which is located on the same floor plan.
+         identify and provide the pixel coordinates of point C, which is located on the same floor plan.
         Here is the description of the image:
         '{description}'
         Please provide the coordinates of point C in pixels.
@@ -57,12 +67,8 @@ def main():
     # Initialize the language model
     llm = ChatOpenAI(model_name="gpt-4", openai_api_key=key)
 
+    # Fuse the LLM and the prompt template
     image_chain = LLMChain(llm=llm, prompt=prompt_template)
-
-
-
-    # Generate the image description
-    description = describe_image(image_path)
 
     # Print the description to verify it
     print("Generated Image Description:", description)
@@ -74,19 +80,6 @@ def main():
         "coordinates_B": coordinates_B
     }
 
-    # Example manual description (modify with actual data if known)
-    # manual_description = """
-    #     The image is a 2D floor plan of an apartment. The coordinates for specific points are:
-    #     - Point A is located at (x1, y1) mm from the top left corner.
-    #     - Point B is located at (x2, y2) mm from the top left corner.
-    #     - Point C is located at (x3, y3) mm from the top left corner.
-    #     Each pixel in the image equals 1 mm.
-    # """
-
-    # Prepare the input dictionary with the description
-    # inputs = {"description": description}
-    #
-    # # Run the chain with the inputs
     result = image_chain.run(inputs)
     print(result)
 

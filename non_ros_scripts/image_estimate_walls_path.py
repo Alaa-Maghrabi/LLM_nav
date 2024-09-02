@@ -3,6 +3,9 @@
 # Here, we pass the image and the coordinates of A, B, C, then the walls are detected using opencv (no idea how
 # accurate that would be) and then find the path.
 
+# This file is also a good example of how you can make multiple requests from the LLM without needing to
+# re-initialise each time
+
 # Note, use image_estimate_walls_path_coordinates.py can be used to obtain a list of coordinates instead of a string
 # as the model output
 
@@ -89,6 +92,12 @@ def visualize_walls_and_doors(image_path, walls, doors, output_path='output_imag
 
 # Function to process the image and generate a description
 def describe_image(image_path):
+    """
+    #TODO: Find the link to this code that was provided online and tweaked to your needs
+
+    :param image_path: a string to the location of the image to be used
+    :return: a text description of the provided image
+    """
     try:
         image = Image.open(image_path)
         inputs = processor(images=image, return_tensors="pt")
@@ -101,7 +110,7 @@ def describe_image(image_path):
 
 def get_path(start_point_idx, end_point_idx):
     key = load_key()
-    image_path = "/home/spyros/Elm/LLM_nav/non_ros_scripts/example_room.png"
+    image_path = "example_room.png"
 
     # Example usage
     walls, doors = detect_walls_and_doors(image_path)
@@ -127,6 +136,7 @@ def get_path(start_point_idx, end_point_idx):
     start_point = points_of_interest[start_point_idx]
     end_point = points_of_interest[end_point_idx]
 
+    # Manually pass the door coordinates since the opencv function does not extract them correctly
     door1 = (150, 175)
     door2 = (188, 277)
     door3 = (470, 188)
@@ -155,7 +165,7 @@ def get_path(start_point_idx, end_point_idx):
 
             Navigation Request: From {start_point} to {end_point}
         """)
-    # Create an instance of the LLMChain with the prompt template
+    # Fuse the LLMChain with the prompt template
     navigation_chain = LLMChain(llm=llm, prompt=prompt_template)
 
     ##################################################################################################
@@ -176,6 +186,7 @@ def get_path(start_point_idx, end_point_idx):
     result = navigation_chain.run(inputs)
 
     return result, image_path, doors, walls
+
 
 def main():
     # The locations are [A, B, C, Starting_point], e.g. a request from 0 to 2 will be from A to C
